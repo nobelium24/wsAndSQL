@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "postgres",
-    "password": "oluwatobi",
+    "password": "password",
     "database": "wsandsql",
-    "host": "127.0.0.1",
+    "host": "host.docker.internal:5432",
     "dialect": "postgres"
   },
   "test": {

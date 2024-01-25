@@ -3,8 +3,8 @@ import { UserModel } from './userModel';
 
 const dbName = "wsAndSQL";
 const userName = "postgres";
-const password = "oluwatobi";
-const host = "localhost";
+const password = "password";
+const host = "host.docker.internal";
 const dialect = "postgres";
 
 const sequelize = new Sequelize(dbName, userName, password, {
@@ -37,7 +37,11 @@ PostModel.init({
     },
     userId:{
         type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: UserModel,
+            key: 'id'
+        }
     },
     createdAt:{
         type: DataTypes.DATE,

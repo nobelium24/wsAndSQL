@@ -1,15 +1,16 @@
-import {Model, DataTypes, Sequelize} from 'sequelize';
+import { Model, DataTypes, Sequelize } from 'sequelize';
 import { PostModel } from './postModel';
+import { PrivateMessageModel } from './privateMessageModel';
 
 const dbName = "wsAndSQL";
 const userName = "postgres";
-const password = "oluwatobi";
-const host = "localhost";
+const password = "password";
+const host = "host.docker.internal";
 const dialect = "postgres";
 
 const sequelize = new Sequelize(dbName, userName, password, {
     host: host,
-    dialect: dialect 
+    dialect: dialect
 });
 
 export class UserModel extends Model {
@@ -24,48 +25,58 @@ export class UserModel extends Model {
 }
 
 UserModel.init({
-    id:{
+    id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true
     },
-    firstName:{
+    firstName: {
         type: DataTypes.STRING(128),
         allowNull: false
     },
-    lastName:{
+    lastName: {
         type: DataTypes.STRING(128),
         allowNull: false
     },
-    userName:{
+    userName: {
         type: DataTypes.STRING(128),
         allowNull: false,
         unique: true
     },
-    email:{
+    email: {
         type: DataTypes.STRING(128),
         allowNull: false,
         unique: true
     },
-    password:{
+    password: {
         type: DataTypes.STRING(128),
         allowNull: false
     },
-    createdAt:{
+    createdAt: {
         type: DataTypes.DATE,
         allowNull: false
     },
-    updatedAt:{
+    updatedAt: {
         type: DataTypes.DATE,
         allowNull: false
     }
-},{
+}, {
     tableName: 'users',
     sequelize: sequelize
 })
 
-UserModel.hasMany(PostModel,{
+UserModel.hasMany(PostModel, {
     foreignKey: 'userId',
     sourceKey: 'id',
     as: 'posts'
 })
+
+UserModel.hasMany(PrivateMessageModel, {
+    foreignKey: 'senderId',
+    as: 'sentMessages'
+});
+
+UserModel.hasMany(PrivateMessageModel, {
+    foreignKey: 'receiverId',
+    as: 'receivedMessages'
+});

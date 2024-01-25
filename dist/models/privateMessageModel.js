@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PostModel = void 0;
+exports.PrivateMessageModel = void 0;
 const sequelize_1 = require("sequelize");
 const userModel_1 = require("./userModel");
 const dbName = "wsAndSQL";
@@ -12,30 +12,38 @@ const sequelize = new sequelize_1.Sequelize(dbName, userName, password, {
     host: host,
     dialect: dialect
 });
-class PostModel extends sequelize_1.Model {
+class PrivateMessageModel extends sequelize_1.Model {
 }
-exports.PostModel = PostModel;
-PostModel.init({
+exports.PrivateMessageModel = PrivateMessageModel;
+PrivateMessageModel.init({
     id: {
         type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true
     },
-    title: {
-        type: sequelize_1.DataTypes.STRING(128),
-        allowNull: false
-    },
-    content: {
-        type: sequelize_1.DataTypes.TEXT,
-        allowNull: false
-    },
-    userId: {
+    senderId: {
         type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
             model: userModel_1.UserModel,
             key: 'id'
         }
+    },
+    receiverId: {
+        type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        references: {
+            model: userModel_1.UserModel,
+            key: 'id'
+        }
+    },
+    message: {
+        type: sequelize_1.DataTypes.STRING(128),
+        allowNull: false
+    },
+    roomId: {
+        type: sequelize_1.DataTypes.STRING(128),
+        allowNull: false
     },
     createdAt: {
         type: sequelize_1.DataTypes.DATE,
@@ -46,11 +54,16 @@ PostModel.init({
         allowNull: false
     }
 }, {
-    tableName: "posts",
-    sequelize
+    sequelize,
+    tableName: 'privateMessages'
 });
-PostModel.belongsTo(userModel_1.UserModel, {
-    foreignKey: "userId",
-    as: "user",
+PrivateMessageModel.belongsTo(userModel_1.UserModel, {
+    foreignKey: "senderId",
+    as: "sender",
+    targetKey: "id"
+});
+PrivateMessageModel.belongsTo(userModel_1.UserModel, {
+    foreignKey: "receiverId",
+    as: "receiver",
     targetKey: "id"
 });
