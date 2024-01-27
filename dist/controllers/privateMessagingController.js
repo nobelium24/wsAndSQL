@@ -49,7 +49,7 @@ const getMessagesForRoom = (req, res, next) => __awaiter(void 0, void 0, void 0,
                 ['createdAt', 'ASC']
             ]
         });
-        return messages;
+        return res.status(200).send({ messages: messages });
     }
     catch (error) {
     }

@@ -11,7 +11,7 @@ export const SendMessage =  (socket:Socket) => {
             socket.join(roomId);
             io.to(roomId).emit("private message", message);
         
-            const privateMessage = await PrivateMessageModel.create({
+            const privateMessage: PrivateMessageModel = await PrivateMessageModel.create({
                 senderId: senderId,
                 receiverId: receiverId,
                 message: message,
@@ -47,7 +47,7 @@ export const getMessagesForRoom = async (req:Request, res:Response, next:NextFun
             ]
         });
 
-        return messages;
+        return res.status(200).send({messages: messages});
     } catch (error) {
 
     }
