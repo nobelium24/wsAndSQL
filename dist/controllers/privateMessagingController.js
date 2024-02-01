@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMessagesForRoom = exports.SendMessage = void 0;
+exports.updateMessage = exports.getMessagesForRoom = exports.SendMessage = void 0;
 const index_1 = require("../index");
 const codeGenerator_1 = require("../utilities/codeGenerator");
 const privateMessageModel_1 = require("../models/privateMessageModel");
@@ -52,6 +52,27 @@ const getMessagesForRoom = (req, res, next) => __awaiter(void 0, void 0, void 0,
         return res.status(200).send({ messages: messages });
     }
     catch (error) {
+        next(error);
     }
 });
 exports.getMessagesForRoom = getMessagesForRoom;
+const updateMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { messageId, newMessage } = req.body;
+        const updatedMessage = yield privateMessageModel_1.PrivateMessageModel.update({ message: newMessage }, {
+            where: {
+                id: messageId
+            }
+        });
+        if (updatedMessage[0] === 0) {
+            return res.status(404).send({ error: 'Message not found' });
+        }
+        else {
+            return res.status(200).send({ message: 'Message updated successfully' });
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.updateMessage = updateMessage;

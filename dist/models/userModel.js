@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModel = void 0;
 const sequelize_1 = require("sequelize");
-const postModel_1 = require("./postModel");
-const privateMessageModel_1 = require("./privateMessageModel");
 const dbName = "wsAndSQL";
 const userName = "postgres";
 const password = "password";
@@ -55,17 +53,4 @@ UserModel.init({
 }, {
     tableName: 'users',
     sequelize: sequelize
-});
-UserModel.hasMany(postModel_1.PostModel, {
-    foreignKey: 'userId',
-    sourceKey: 'id',
-    as: 'posts'
-});
-UserModel.hasMany(privateMessageModel_1.PrivateMessageModel, {
-    foreignKey: 'senderId',
-    as: 'sentMessages'
-});
-UserModel.hasMany(privateMessageModel_1.PrivateMessageModel, {
-    foreignKey: 'receiverId',
-    as: 'receivedMessages'
 });

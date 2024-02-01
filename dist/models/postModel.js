@@ -49,8 +49,3 @@ PostModel.init({
     tableName: "posts",
     sequelize
 });
-PostModel.belongsTo(userModel_1.UserModel, {
-    foreignKey: "userId",
-    as: "user",
-    targetKey: "id"
-});

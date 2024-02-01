@@ -57,13 +57,3 @@ PrivateMessageModel.init({
     sequelize,
     tableName: 'privateMessages'
 });
-PrivateMessageModel.belongsTo(userModel_1.UserModel, {
-    foreignKey: "senderId",
-    as: "sender",
-    targetKey: "id"
-});
-PrivateMessageModel.belongsTo(userModel_1.UserModel, {
-    foreignKey: "receiverId",
-    as: "receiver",
-    targetKey: "id"
-});

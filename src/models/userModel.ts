@@ -65,18 +65,3 @@ UserModel.init({
     sequelize: sequelize
 })
 
-UserModel.hasMany(PostModel, {
-    foreignKey: 'userId',
-    sourceKey: 'id',
-    as: 'posts'
-})
-
-UserModel.hasMany(PrivateMessageModel, {
-    foreignKey: 'senderId',
-    as: 'sentMessages'
-});
-
-UserModel.hasMany(PrivateMessageModel, {
-    foreignKey: 'receiverId',
-    as: 'receivedMessages'
-});

@@ -1,22 +1,20 @@
 'use strict';
 
-const { INTEGER } = require('sequelize');
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up (queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('privateMessages', {
+    await queryInterface.createTable('groupMessages', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       senderId: {
         type: Sequelize.INTEGER,
@@ -28,11 +26,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      receiverId: {
+      groupId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'users',
+          model: 'groupTable',
           key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -41,10 +39,6 @@ module.exports = {
       message: {
         type: Sequelize.TEXT,
         allowNull: false
-      },
-      roomId: {
-        allowNull: false,
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -59,13 +53,13 @@ module.exports = {
     })
   },
 
-  async down(queryInterface, Sequelize) {
+  async down (queryInterface, Sequelize) {
     /**
      * Add reverting commands here.
      *
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('privateMessages')
+    await queryInterface.dropTable('groupMessages')
   }
 };

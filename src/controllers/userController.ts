@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UserModel } from "../models/userModel";
 import * as argon2 from "argon2";
+import { generateUserToken } from "../services/sessionService";
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
@@ -28,8 +29,9 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
         if (!verifyPassword) {
             return res.status(401).send({ message: "Invalid credentials" });
         }
-        return res.status(200).send({ message: "Login successful", user });
+        const token = generateUserToken(user.email);
+        return res.status(200).send({ message: "Login successful", user, token });
     } catch (error) {
-
+        next(error);
     }
 }

@@ -35,6 +35,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = exports.register = void 0;
 const userModel_1 = require("../models/userModel");
 const argon2 = __importStar(require("argon2"));
+const sessionService_1 = require("../services/sessionService");
 const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { firstName, lastName, userName, email, password } = req.body;
@@ -62,9 +63,11 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         if (!verifyPassword) {
             return res.status(401).send({ message: "Invalid credentials" });
         }
-        return res.status(200).send({ message: "Login successful", user });
+        const token = (0, sessionService_1.generateUserToken)(user.email);
+        return res.status(200).send({ message: "Login successful", user, token });
     }
     catch (error) {
+        next(error);
     }
 });
 exports.login = login;

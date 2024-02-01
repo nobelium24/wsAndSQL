@@ -65,14 +65,3 @@ PrivateMessageModel.init({
     tableName: 'privateMessages'
 })
 
-PrivateMessageModel.belongsTo(UserModel, {
-    foreignKey: "senderId",
-    as: "sender",
-    targetKey: "id"
-});
-
-PrivateMessageModel.belongsTo(UserModel, {
-    foreignKey: "receiverId",
-    as: "receiver",
-    targetKey: "id"
-});

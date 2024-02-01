@@ -1,6 +1,8 @@
 import express from 'express';
 import { database } from './database/database';
 import { Server, Socket } from 'socket.io';
+import { SendMessage } from './controllers/privateMessagingController';
+import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 app.use(express.json());
@@ -25,6 +27,8 @@ const io = new Server(server, {
 io.on("connection", socket => {
     console.log(`User with id ${socket.id} connected`);
 
+    SendMessage(socket);
+
     socket.on("chat message", msg => {
         console.log(msg);
         io.emit("chat message", msg);
@@ -35,6 +39,12 @@ io.on("connection", socket => {
     })
 })
 
+app.use((req, res, next) => {
+    res.status(404).send({ message: "Not found" });
+    next();
+})
+
+app.use(errorHandler)
 
 
 export {io}

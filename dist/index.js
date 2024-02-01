@@ -16,6 +16,8 @@ exports.io = void 0;
 const express_1 = __importDefault(require("express"));
 const database_1 = require("./database/database");
 const socket_io_1 = require("socket.io");
+const privateMessagingController_1 = require("./controllers/privateMessagingController");
+const errorHandler_1 = require("./middlewares/errorHandler");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -37,6 +39,7 @@ const io = new socket_io_1.Server(server, {
 exports.io = io;
 io.on("connection", socket => {
     console.log(`User with id ${socket.id} connected`);
+    (0, privateMessagingController_1.SendMessage)(socket);
     socket.on("chat message", msg => {
         console.log(msg);
         io.emit("chat message", msg);
@@ -45,3 +48,8 @@ io.on("connection", socket => {
         console.log(`User with id ${socket.id} disconnected`);
     });
 });
+app.use((req, res, next) => {
+    res.status(404).send({ message: "Not found" });
+    next();
+});
+app.use(errorHandler_1.errorHandler);

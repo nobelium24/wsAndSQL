@@ -49,6 +49,25 @@ export const getMessagesForRoom = async (req:Request, res:Response, next:NextFun
 
         return res.status(200).send({messages: messages});
     } catch (error) {
+        next(error);
+    }
+}
 
+export const updateMessage = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { messageId, newMessage } = req.body;
+        const updatedMessage = await PrivateMessageModel.update({ message: newMessage }, {
+            where: {
+                id: messageId
+            }
+        });
+
+        if (updatedMessage[0] === 0) {
+            return res.status(404).send({ error: 'Message not found' });
+        } else {
+            return res.status(200).send({ message: 'Message updated successfully' });
+        }
+    } catch (error) {
+        next(error);
     }
 }

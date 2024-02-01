@@ -56,8 +56,3 @@ PostModel.init({
     sequelize
 })
 
-PostModel.belongsTo(UserModel, {
-    foreignKey: "userId",
-    as: "user",
-    targetKey: "id"
-})
