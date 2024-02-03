@@ -12,7 +12,7 @@ module.exports = {
      */
     await queryInterface.createTable('groupTable', {
       id: {
-        allowNull: true,
+        allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
@@ -27,7 +27,17 @@ module.exports = {
       },
       groupPhoto:{
         type: Sequelize.STRING,
-        allowNull:true
+        allowNull:false
+      },
+      groupOwner:{
+        type: Sequelize.INTEGER,
+        allowNull:false,
+        references: {
+          model: 'users', 
+          key: 'id' 
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,

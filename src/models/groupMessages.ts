@@ -1,5 +1,6 @@
 import {Model, DataTypes, Sequelize} from 'sequelize';
 import { UserModel } from './userModel';
+import { GroupModel } from './groupModel';
 
 const dbName = "wsAndSQL";
 const userName = "postgres";
@@ -12,35 +13,22 @@ const sequelize = new Sequelize(dbName, userName, password, {
     dialect: dialect
 })
 
-export class GroupModel extends Model {
+export class GroupMessageModel extends Model {
     public id!: number;
-    public groupName!: string;
-    public groupDescription!: string;
-    public groupPhoto!: string;
-    public groupOwner!: number;
+    public senderId!: number;
+    public groupId!: number;
+    public message!: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
-GroupModel.init({
-    id:{
+GroupMessageModel.init({
+    id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true
     },
-    groupName:{
-        type: DataTypes.STRING(128),
-        allowNull: false
-    },
-    groupDescription:{
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
-    groupPhoto:{
-        type: DataTypes.STRING(128),
-        allowNull: false
-    },
-    groupOwner:{
+    senderId: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
@@ -48,15 +36,27 @@ GroupModel.init({
             key: 'id'
         }
     },
-    createdAt:{
+    groupId: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        references: {
+            model: GroupModel,
+            key: 'id'
+        }
+    },
+    message: {
+        type: DataTypes.STRING(128),
+        allowNull: false
+    },
+    createdAt: {
         type: DataTypes.DATE,
         allowNull: false
     },
-    updatedAt:{
+    updatedAt: {
         type: DataTypes.DATE,
         allowNull: false
     }
 }, {
-    tableName: "groups",
+    tableName: "groupMessages",
     sequelize
 })

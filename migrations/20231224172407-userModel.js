@@ -38,6 +38,10 @@ module.exports = {
         type: Sequelize.STRING(128),
         allowNull:false
       },
+      groupPhoto:{
+        type: Sequelize.STRING,
+        allowNull:false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
