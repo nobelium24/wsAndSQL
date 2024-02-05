@@ -3,6 +3,7 @@ import { database } from './database/database';
 import { Server, Socket } from 'socket.io';
 import { SendMessage } from './controllers/privateMessagingController';
 import { errorHandler } from './middlewares/errorHandler';
+import { SendGroupMessage } from './controllers/groupChatController';
 
 const app = express();
 app.use(express.json());
@@ -28,6 +29,7 @@ io.on("connection", socket => {
     console.log(`User with id ${socket.id} connected`);
 
     SendMessage(socket);
+    SendGroupMessage(socket);
 
     socket.on("chat message", msg => {
         console.log(msg);

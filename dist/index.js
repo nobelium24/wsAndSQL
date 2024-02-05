@@ -18,6 +18,7 @@ const database_1 = require("./database/database");
 const socket_io_1 = require("socket.io");
 const privateMessagingController_1 = require("./controllers/privateMessagingController");
 const errorHandler_1 = require("./middlewares/errorHandler");
+const groupChatController_1 = require("./controllers/groupChatController");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -40,6 +41,7 @@ exports.io = io;
 io.on("connection", socket => {
     console.log(`User with id ${socket.id} connected`);
     (0, privateMessagingController_1.SendMessage)(socket);
+    (0, groupChatController_1.SendGroupMessage)(socket);
     socket.on("chat message", msg => {
         console.log(msg);
         io.emit("chat message", msg);
