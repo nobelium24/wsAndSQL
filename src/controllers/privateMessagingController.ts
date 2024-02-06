@@ -71,3 +71,22 @@ export const updateMessage = async (req: Request, res: Response, next: NextFunct
         next(error);
     }
 }
+
+export const deleteMessage = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { messageId } = req.body;
+        const deletedMessage = await PrivateMessageModel.destroy({
+            where: {
+                id: messageId
+            }
+        });
+
+        if (deletedMessage === 0) {
+            return res.status(404).send({ error: 'Message not found' });
+        } else {
+            return res.status(200).send({ message: 'Message deleted successfully' });
+        }
+    } catch (error) {
+        next(error);
+    }
+}

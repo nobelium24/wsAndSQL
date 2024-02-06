@@ -36,11 +36,21 @@ exports.login = exports.register = void 0;
 const userModel_1 = require("../models/userModel");
 const argon2 = __importStar(require("argon2"));
 const sessionService_1 = require("../services/sessionService");
+const sequelize_1 = require("sequelize");
 const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { firstName, lastName, userName, email, password } = req.body;
-        const verifyUser = yield userModel_1.UserModel.findOne({ where: { email: email } });
-        if (verifyUser) {
+        const verifyUser = yield userModel_1.UserModel.findOne({
+            where: {
+                [sequelize_1.Op.or]: [
+                    { email: email },
+                    { username: userName }
+                ]
+            }
+        });
+        if (verifyUser === null)
+            return res.status(404).send({ message: "User not found" });
+        if (verifyUser.userName === userName || verifyUser.email === email) {
             return res.status(409).send({ message: "User already exists" });
         }
         const hashedPassword = yield argon2.hash(password);
