@@ -19,9 +19,13 @@ const socket_io_1 = require("socket.io");
 const privateMessagingController_1 = require("./controllers/privateMessagingController");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const groupChatController_1 = require("./controllers/groupChatController");
+const cors_1 = __importDefault(require("cors"));
+const userRoute_1 = require("./routes/userRoute");
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({ origin: '*' }));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use("/user", userRoute_1.router);
 const server = app.listen(3000, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('listening on port 3000');
     try {

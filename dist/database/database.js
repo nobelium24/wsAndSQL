@@ -15,7 +15,6 @@ const pg_1 = require("pg");
 const dotenv_1 = require("dotenv");
 const database = () => __awaiter(void 0, void 0, void 0, function* () {
     (0, dotenv_1.config)();
-    // console.log(process.env, 59);
     const enVar = process.env;
     const dbName = enVar.DB_NAME;
     const userName = enVar.DB_USERNAME;
@@ -23,32 +22,25 @@ const database = () => __awaiter(void 0, void 0, void 0, function* () {
     const host = enVar.DB_HOST;
     const dialect = "postgres";
     const port = enVar.DB_PORT ? parseInt(enVar.DB_PORT) : 5432;
-    // const dbName = "wsAndSQL";
-    // const userName = "postgres";
-    // const password = "password";
-    // const host = "host.docker.internal";
-    // const port = 5432;
-    // const dialect = "postgres";
     if (!dbName || !userName || !password || !host || !dialect) {
         throw new Error("One or more environment variables are not defined");
     }
-    // console.log(dbName, userName, password, host, dialect, port)
-    const client = new pg_1.Client({ host: host, user: userName, password: password });
+    const pool = new pg_1.Pool({ host: host, user: userName, password: password, database: 'postgres' });
     try {
-        yield client.connect();
+        const client = yield pool.connect();
         const dbExists = yield client.query(`SELECT 1 FROM pg_database WHERE datname = '${dbName}'`);
         if (dbExists.rowCount === 0) {
             yield client.query(`CREATE DATABASE ${dbName}`);
         }
+        client.release();
     }
     catch (error) {
         if (error instanceof Error && 'code' in error && error.code !== "42P04") {
-            console.log(error, 45);
             throw error;
         }
     }
     finally {
-        yield client.end();
+        yield pool.end();
     }
     const sequelize = new sequelize_1.Sequelize(dbName, userName, password, {
         host: host,

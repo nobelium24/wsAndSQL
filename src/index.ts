@@ -4,10 +4,15 @@ import { Server, Socket } from 'socket.io';
 import { SendMessage } from './controllers/privateMessagingController';
 import { errorHandler } from './middlewares/errorHandler';
 import { SendGroupMessage } from './controllers/groupChatController';
+import cors from 'cors';
+import { router } from './routes/userRoute';
 
 const app = express();
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use("/user", router)
 
 const server = app.listen(3000, async () => {
     console.log('listening on port 3000');

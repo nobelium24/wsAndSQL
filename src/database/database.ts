@@ -1,11 +1,9 @@
 import { Sequelize } from 'sequelize';
-import { Client } from "pg";
-import { config } from "dotenv";
+import { Pool } from 'pg';
+import { config } from 'dotenv';
 
 export const database = async () => {
     config();
-
-    // console.log(process.env, 59);
 
     const enVar = process.env;
 
@@ -16,35 +14,27 @@ export const database = async () => {
     const dialect = "postgres";
     const port = enVar.DB_PORT ? parseInt(enVar.DB_PORT) : 5432;
 
-    // const dbName = "wsAndSQL";
-    // const userName = "postgres";
-    // const password = "password";
-    // const host = "host.docker.internal";
-    // const port = 5432;
-    // const dialect = "postgres";
-    
     if (!dbName || !userName || !password || !host || !dialect) {
         throw new Error("One or more environment variables are not defined")
     }
 
-    // console.log(dbName, userName, password, host, dialect, port)
-
-    const client = new Client({ host: host, user: userName, password: password });
+    const pool = new Pool({ host: host, user: userName, password: password, database: 'postgres' });
 
     try {
-        await client.connect();
+        const client = await pool.connect();
 
         const dbExists = await client.query(`SELECT 1 FROM pg_database WHERE datname = '${dbName}'`);
         if (dbExists.rowCount === 0) {
             await client.query(`CREATE DATABASE ${dbName}`);
         }
+
+        client.release();
     } catch (error) {
         if (error instanceof Error && 'code' in error && error.code !== "42P04") {
-            console.log(error, 45)
             throw error;
         }
     } finally {
-        await client.end();
+        await pool.end();
     }
 
     const sequelize = new Sequelize(dbName, userName, password, {

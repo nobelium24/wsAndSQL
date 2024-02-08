@@ -6,6 +6,7 @@ const secret = process.env.JWT_SECRET;
 
 interface MyJwtPayload extends JwtPayload {
     role?: string;
+    email: string;
 }
 
 
@@ -15,14 +16,14 @@ export const generateUserToken = (email: string): string => {
     return token;
 }
 
-export const verifyUserToken = (token: string): any => {
+export const verifyUserToken = (token: string): string => {
     try {
         if (!token) throw new Error("No token provided");
         if (!secret) throw new Error("No secret provided");
-        const decodedUser = jsonwebtoken.verify(token, secret) as MyJwtPayload;
+        const decodedUser: MyJwtPayload = jsonwebtoken.verify(token, secret) as MyJwtPayload;
         const role = decodedUser.role;
         if (role !== "user") throw new Error("Invalid token");
-        return decodedUser;
+        return decodedUser.email;
     } catch (error) {
         throw {message:"TokenVerificationError",error};
     }

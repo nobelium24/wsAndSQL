@@ -6,20 +6,20 @@ import { Op } from "sequelize";
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+        console.log(req.body)
+
         const { firstName, lastName, userName, email, password } = req.body;
 
         const verifyUser: UserModel | null = await UserModel.findOne({
             where: {
                 [Op.or]: [
                     { email: email },
-                    { username: userName }
+                    { userName: userName }
                 ]
             }
         });
 
-        if (verifyUser === null) return res.status(404).send({ message: "User not found" });
-
-        if (verifyUser.userName === userName || verifyUser.email === email) {
+        if (verifyUser && (verifyUser.userName === userName || verifyUser.email === email)) {
             return res.status(409).send({ message: "User already exists" });
         }
 

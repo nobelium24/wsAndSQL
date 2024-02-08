@@ -25,7 +25,7 @@ const verifyUserToken = (token) => {
         const role = decodedUser.role;
         if (role !== "user")
             throw new Error("Invalid token");
-        return decodedUser;
+        return decodedUser.email;
     }
     catch (error) {
         throw { message: "TokenVerificationError", error };
