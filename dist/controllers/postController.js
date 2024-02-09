@@ -9,11 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePost = exports.updatePost = exports.getSinglePost = exports.getUserPost = exports.createPost = void 0;
+exports.getFriendPost = exports.deletePost = exports.updatePost = exports.getSinglePost = exports.getUserPost = exports.createPost = void 0;
 const sessionService_1 = require("../services/sessionService");
 const userModel_1 = require("../models/userModel");
 const postModel_1 = require("../models/postModel");
 const sequelize_1 = require("sequelize");
+const friendModel_1 = require("../models/friendModel");
 const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -123,7 +124,7 @@ exports.updatePost = updatePost;
 const deletePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _e;
     try {
-        const { postId } = req.body;
+        const { postId } = req.params;
         const token = (_e = req.headers.authorization) === null || _e === void 0 ? void 0 : _e.split(' ')[1];
         if (!token)
             return res.status(401).send({ message: "Unauthorized" });
@@ -150,3 +151,37 @@ const deletePost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.deletePost = deletePost;
+const getFriendPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
+    try {
+        const token = (_f = req.headers.authorization) === null || _f === void 0 ? void 0 : _f.split(' ')[1];
+        if (!token)
+            return res.status(401).send({ message: "Unauthorized" });
+        const user = (0, sessionService_1.verifyUserToken)(token);
+        const verifyUser = yield userModel_1.UserModel.findOne({
+            where: {
+                email: user
+            }
+        });
+        if (!verifyUser)
+            return res.status(404).send({ message: "User not found" });
+        const friends = yield friendModel_1.FriendModel.findAll({
+            where: {
+                userId: verifyUser.id
+            }
+        });
+        const friendIds = friends.map(friend => friend.friendId);
+        const friendPosts = yield postModel_1.PostModel.findAll({
+            where: {
+                userId: friendIds
+            }
+        });
+        if (friendPosts.length === 0)
+            return res.status(200).send({ message: "No friend posts" });
+        return res.status(200).send({ message: "Friend posts", friendPosts });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.getFriendPost = getFriendPost;

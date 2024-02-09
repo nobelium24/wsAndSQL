@@ -9,7 +9,7 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('posts', {
+    await queryInterface.createTable('friends', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,20 +17,17 @@ module.exports = {
         type: Sequelize.INTEGER,
         unique: true
       },
-      title: {
-        type: Sequelize.STRING(128),
-        allowNull: false
-      },
-      content: {
-        type: Sequelize.TEXT,
-        allowNull: false
-      },
-      likes: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0
+        references: {
+          model: 'users', 
+          key: 'id' 
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
-      userId: {
+      friendId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -60,6 +57,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('posts')
+    await queryInterface.dropTable('friends');
   }
 };

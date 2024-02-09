@@ -54,7 +54,7 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         }
         const hashedPassword = yield argon2.hash(password);
         const user = yield userModel_1.UserModel.create({ firstName, lastName, userName, email, password: hashedPassword });
-        return res.status(201).send({ message: "User created successfully", user });
+        return res.status(201).send({ message: "User created successfully" });
     }
     catch (error) {
         next(error);

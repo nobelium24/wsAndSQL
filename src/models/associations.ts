@@ -6,6 +6,7 @@ import { GroupMessageModel } from "./groupMessages";
 import { GroupMemberModel } from "./groupMembers";
 import dotenv from 'dotenv';
 import { Sequelize } from "sequelize";
+import { FriendModel } from "./friendModel";
 dotenv.config();
 
 const enVar = process.env;
@@ -59,6 +60,12 @@ UserModel.hasMany(GroupMessageModel, {
 UserModel.hasMany(GroupMemberModel, {
     foreignKey: 'memberId',
     as: 'groupMembers',
+    sourceKey: 'id'
+});
+
+UserModel.hasMany(FriendModel, {
+    foreignKey: 'userId',
+    as: 'friends',
     sourceKey: 'id'
 });
 
@@ -122,3 +129,8 @@ GroupMemberModel.belongsTo(GroupModel, {
     targetKey: 'id'
 })
 
+FriendModel.belongsTo(UserModel, {
+    foreignKey: 'userId',
+    as: 'user',
+    targetKey: 'id'
+})

@@ -21,11 +21,13 @@ const errorHandler_1 = require("./middlewares/errorHandler");
 const groupChatController_1 = require("./controllers/groupChatController");
 const cors_1 = __importDefault(require("cors"));
 const userRoute_1 = require("./routes/userRoute");
+const postRouter_1 = require("./routes/postRouter");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({ origin: '*' }));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use("/user", userRoute_1.router);
+app.use("/posts", postRouter_1.postRouter);
 const server = app.listen(3000, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('listening on port 3000');
     try {
@@ -55,7 +57,7 @@ io.on("connection", socket => {
     });
 });
 app.use((req, res, next) => {
-    res.status(404).send({ message: "Not found" });
+    res.status(404).send({ message: "Route not found" });
     next();
 });
 app.use(errorHandler_1.errorHandler);

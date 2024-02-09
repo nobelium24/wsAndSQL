@@ -5,7 +5,7 @@ interface Schema {
 }
 
 
-export const validate = (schema: Schema) => async (req: Request, res: Response, next: NextFunction) => {
+export const validate = (schema: Schema) => async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const body = req.body
     // console.log(body, 33);
     

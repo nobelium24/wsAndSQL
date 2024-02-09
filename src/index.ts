@@ -6,6 +6,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { SendGroupMessage } from './controllers/groupChatController';
 import cors from 'cors';
 import { router } from './routes/userRoute';
+import { postRouter } from './routes/postRouter';
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", router)
+app.use("/posts", postRouter)
 
 const server = app.listen(3000, async () => {
     console.log('listening on port 3000');
@@ -47,7 +49,7 @@ io.on("connection", socket => {
 })
 
 app.use((req, res, next) => {
-    res.status(404).send({ message: "Not found" });
+    res.status(404).send({ message: "Route not found" });
     next();
 })
 

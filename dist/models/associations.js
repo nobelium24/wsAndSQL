@@ -11,6 +11,7 @@ const groupMessages_1 = require("./groupMessages");
 const groupMembers_1 = require("./groupMembers");
 const dotenv_1 = __importDefault(require("dotenv"));
 const sequelize_1 = require("sequelize");
+const friendModel_1 = require("./friendModel");
 dotenv_1.default.config();
 const enVar = process.env;
 const dbName = enVar.DB_NAME;
@@ -54,6 +55,11 @@ userModel_1.UserModel.hasMany(groupMessages_1.GroupMessageModel, {
 userModel_1.UserModel.hasMany(groupMembers_1.GroupMemberModel, {
     foreignKey: 'memberId',
     as: 'groupMembers',
+    sourceKey: 'id'
+});
+userModel_1.UserModel.hasMany(friendModel_1.FriendModel, {
+    foreignKey: 'userId',
+    as: 'friends',
     sourceKey: 'id'
 });
 groupModel_1.GroupModel.hasMany(groupMessages_1.GroupMessageModel, {
@@ -104,5 +110,10 @@ groupMembers_1.GroupMemberModel.belongsTo(userModel_1.UserModel, {
 groupMembers_1.GroupMemberModel.belongsTo(groupModel_1.GroupModel, {
     foreignKey: 'groupId',
     as: 'group',
+    targetKey: 'id'
+});
+friendModel_1.FriendModel.belongsTo(userModel_1.UserModel, {
+    foreignKey: 'userId',
+    as: 'user',
     targetKey: 'id'
 });

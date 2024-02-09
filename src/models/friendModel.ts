@@ -1,6 +1,7 @@
 import {Model, DataTypes, Sequelize} from 'sequelize';
-import { UserModel } from './userModel';
+
 import dotenv from 'dotenv';
+import { UserModel } from './userModel';
 dotenv.config();
 
 const enVar = process.env;
@@ -18,34 +19,24 @@ if (!dbName || !userName || !password || !host || !dialect) {
 
 const sequelize = new Sequelize(dbName, userName, password, {
     host: host,
-    dialect: dialect 
+    dialect: dialect
 });
 
-export class PostModel extends Model {
+export class FriendModel extends Model {
     public id!: number;
-    public title!: string;
-    public content!: string;
     public userId!: number;
-    public likes!: number;
+    public friendId!: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
 
-PostModel.init({
-    id:{
+FriendModel.init({
+    id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true
     },
-    title:{
-        type: DataTypes.STRING(128),
-        allowNull: false
-    },
-    content:{
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
-    userId:{
+    userId: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
@@ -53,21 +44,23 @@ PostModel.init({
             key: 'id'
         }
     },
-    likes:{
+    friendId: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
-        defaultValue: 0
+        references: {
+            model: UserModel,
+            key: 'id'
+        }
     },
-    createdAt:{
+    createdAt: {
         type: DataTypes.DATE,
         allowNull: false
     },
-    updatedAt:{
+    updatedAt: {
         type: DataTypes.DATE,
         allowNull: false
     }
 }, {
-    tableName: "posts",
-    sequelize
-})
-
+    sequelize,
+    tableName: "friends"
+});

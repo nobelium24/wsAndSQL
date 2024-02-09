@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 
         const user: UserModel = await UserModel.create({ firstName, lastName, userName, email, password: hashedPassword });
 
-        return res.status(201).send({ message: "User created successfully", user });
+        return res.status(201).send({ message: "User created successfully"  });
     } catch (error) {
         next(error);
     }
