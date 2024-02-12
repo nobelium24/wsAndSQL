@@ -7,6 +7,7 @@ import { GroupMemberModel } from "./groupMembers";
 import dotenv from 'dotenv';
 import { Sequelize } from "sequelize";
 import { FriendModel } from "./friendModel";
+import { LikesModel } from "./likesModel";
 dotenv.config();
 
 const enVar = process.env;
@@ -36,7 +37,7 @@ UserModel.hasMany(PostModel, {
 UserModel.hasMany(PrivateMessageModel, {
     foreignKey: 'senderId',
     as: 'sentMessages',
-    sourceKey: 'id' 
+    sourceKey: 'id'
 });
 
 UserModel.hasMany(PrivateMessageModel, {
@@ -69,7 +70,13 @@ UserModel.hasMany(FriendModel, {
     sourceKey: 'id'
 });
 
-GroupModel.hasMany(GroupMessageModel,{
+UserModel.hasMany(LikesModel, {
+    foreignKey: 'userId',
+    as: 'likes',
+    sourceKey: 'id'
+})
+
+GroupModel.hasMany(GroupMessageModel, {
     foreignKey: 'groupId',
     as: 'messages',
     sourceKey: 'id'
@@ -80,6 +87,12 @@ GroupModel.hasMany(GroupMemberModel, {
     as: 'members',
     sourceKey: 'id'
 });
+
+PostModel.hasMany(LikesModel, {
+    foreignKey: 'postId',
+    as: 'likes',
+    sourceKey: 'id'
+})
 
 PrivateMessageModel.belongsTo(UserModel, {
     foreignKey: "senderId",
@@ -111,7 +124,7 @@ GroupMessageModel.belongsTo(UserModel, {
     targetKey: "id"
 })
 
-GroupMessageModel.belongsTo(GroupMessageModel,{
+GroupMessageModel.belongsTo(GroupMessageModel, {
     foreignKey: 'groupId',
     as: 'group',
     targetKey: 'id'
@@ -133,4 +146,16 @@ FriendModel.belongsTo(UserModel, {
     foreignKey: 'userId',
     as: 'user',
     targetKey: 'id'
+})
+
+LikesModel.belongsTo(UserModel, {
+    foreignKey: 'userId',
+    as: 'user',
+    targetKey: 'id'
+})
+
+LikesModel.belongsTo(PostModel, {
+    foreignKey:'postId',
+    as: 'post',
+    targetKey:'id'
 })

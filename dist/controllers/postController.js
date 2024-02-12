@@ -9,27 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFriendPost = exports.deletePost = exports.updatePost = exports.getSinglePost = exports.getUserPost = exports.createPost = void 0;
-const sessionService_1 = require("../services/sessionService");
-const userModel_1 = require("../models/userModel");
+exports.unlikePost = exports.likePost = exports.getFriendPost = exports.deletePost = exports.updatePost = exports.getSinglePost = exports.getUserPost = exports.createPost = void 0;
 const postModel_1 = require("../models/postModel");
 const sequelize_1 = require("sequelize");
 const friendModel_1 = require("../models/friendModel");
+const likesModel_1 = require("../models/likesModel");
 const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
         const { title, content } = req.body;
-        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
-        if (!token)
-            return res.status(401).send({ message: "Unauthorized" });
-        const user = (0, sessionService_1.verifyUserToken)(token);
-        const verifyUser = yield userModel_1.UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser)
-            return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user;
         const createPost = yield postModel_1.PostModel.create({ title, content, userId: verifyUser.id });
         return res.status(201).send({ message: "Post created successfully", createPost });
     }
@@ -39,19 +27,8 @@ const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createPost = createPost;
 const getUserPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
     try {
-        const token = (_b = req.headers.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
-        if (!token)
-            return res.status(401).send({ message: "Unauthorized" });
-        const user = (0, sessionService_1.verifyUserToken)(token);
-        const verifyUser = yield userModel_1.UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser)
-            return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user;
         const userPost = yield postModel_1.PostModel.findAll({
             where: {
                 userId: verifyUser.id
@@ -65,20 +42,9 @@ const getUserPost = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getUserPost = getUserPost;
 const getSinglePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
     try {
         const { postId } = req.params;
-        const token = (_c = req.headers.authorization) === null || _c === void 0 ? void 0 : _c.split(' ')[1];
-        if (!token)
-            return res.status(401).send({ message: "Unauthorized" });
-        const user = (0, sessionService_1.verifyUserToken)(token);
-        const verifyUser = yield userModel_1.UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser)
-            return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user;
         const singlePost = yield postModel_1.PostModel.findOne({
             where: {
                 id: postId
@@ -92,20 +58,9 @@ const getSinglePost = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 });
 exports.getSinglePost = getSinglePost;
 const updatePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
     try {
         const { postId, title, content } = req.body;
-        const token = (_d = req.headers.authorization) === null || _d === void 0 ? void 0 : _d.split(' ')[1];
-        if (!token)
-            return res.status(401).send({ message: "Unauthorized" });
-        const user = (0, sessionService_1.verifyUserToken)(token);
-        const verifyUser = yield userModel_1.UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser)
-            return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user;
         const updatePost = yield postModel_1.PostModel.update({ title, content }, {
             where: {
                 [sequelize_1.Op.and]: [{ id: postId }, { userId: verifyUser.id }]
@@ -122,20 +77,9 @@ const updatePost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.updatePost = updatePost;
 const deletePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
     try {
         const { postId } = req.params;
-        const token = (_e = req.headers.authorization) === null || _e === void 0 ? void 0 : _e.split(' ')[1];
-        if (!token)
-            return res.status(401).send({ message: "Unauthorized" });
-        const user = (0, sessionService_1.verifyUserToken)(token);
-        const verifyUser = yield userModel_1.UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser)
-            return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user;
         const deletePost = yield postModel_1.PostModel.destroy({
             where: {
                 [sequelize_1.Op.and]: [{ id: postId }, { userId: verifyUser.id }]
@@ -152,19 +96,8 @@ const deletePost = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.deletePost = deletePost;
 const getFriendPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f;
     try {
-        const token = (_f = req.headers.authorization) === null || _f === void 0 ? void 0 : _f.split(' ')[1];
-        if (!token)
-            return res.status(401).send({ message: "Unauthorized" });
-        const user = (0, sessionService_1.verifyUserToken)(token);
-        const verifyUser = yield userModel_1.UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser)
-            return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user;
         const friends = yield friendModel_1.FriendModel.findAll({
             where: {
                 userId: verifyUser.id
@@ -185,3 +118,50 @@ const getFriendPost = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getFriendPost = getFriendPost;
+const likePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { postId } = req.params;
+        const user = req.user;
+        const post = yield postModel_1.PostModel.findOne({
+            where: {
+                id: postId
+            }
+        });
+        if (!post)
+            return res.status(404).send({ message: "Post not found" });
+        yield post.update({ likes: post.likes + 1 });
+        yield likesModel_1.LikesModel.create({
+            userId: user.id,
+            postId: post.id
+        });
+        return res.status(200).send({ likes: post.likes });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.likePost = likePost;
+const unlikePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { postId } = req.params;
+        const user = req.user;
+        const post = yield postModel_1.PostModel.findOne({
+            where: {
+                id: postId
+            }
+        });
+        if (!post)
+            return res.status(404).send({ message: "Post not found" });
+        yield post.update({ likes: post.likes - 1 });
+        yield likesModel_1.LikesModel.destroy({
+            where: {
+                [sequelize_1.Op.and]: [{ userId: user.id }, { postId: post.id }]
+            }
+        });
+        return res.status(200).send({ likes: post.likes });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.unlikePost = unlikePost;

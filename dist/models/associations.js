@@ -12,6 +12,7 @@ const groupMembers_1 = require("./groupMembers");
 const dotenv_1 = __importDefault(require("dotenv"));
 const sequelize_1 = require("sequelize");
 const friendModel_1 = require("./friendModel");
+const likesModel_1 = require("./likesModel");
 dotenv_1.default.config();
 const enVar = process.env;
 const dbName = enVar.DB_NAME;
@@ -62,6 +63,11 @@ userModel_1.UserModel.hasMany(friendModel_1.FriendModel, {
     as: 'friends',
     sourceKey: 'id'
 });
+userModel_1.UserModel.hasMany(likesModel_1.LikesModel, {
+    foreignKey: 'userId',
+    as: 'likes',
+    sourceKey: 'id'
+});
 groupModel_1.GroupModel.hasMany(groupMessages_1.GroupMessageModel, {
     foreignKey: 'groupId',
     as: 'messages',
@@ -70,6 +76,11 @@ groupModel_1.GroupModel.hasMany(groupMessages_1.GroupMessageModel, {
 groupModel_1.GroupModel.hasMany(groupMembers_1.GroupMemberModel, {
     foreignKey: 'groupId',
     as: 'members',
+    sourceKey: 'id'
+});
+postModel_1.PostModel.hasMany(likesModel_1.LikesModel, {
+    foreignKey: 'postId',
+    as: 'likes',
     sourceKey: 'id'
 });
 privateMessageModel_1.PrivateMessageModel.belongsTo(userModel_1.UserModel, {
@@ -115,5 +126,15 @@ groupMembers_1.GroupMemberModel.belongsTo(groupModel_1.GroupModel, {
 friendModel_1.FriendModel.belongsTo(userModel_1.UserModel, {
     foreignKey: 'userId',
     as: 'user',
+    targetKey: 'id'
+});
+likesModel_1.LikesModel.belongsTo(userModel_1.UserModel, {
+    foreignKey: 'userId',
+    as: 'user',
+    targetKey: 'id'
+});
+likesModel_1.LikesModel.belongsTo(postModel_1.PostModel, {
+    foreignKey: 'postId',
+    as: 'post',
     targetKey: 'id'
 });

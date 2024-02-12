@@ -4,23 +4,13 @@ import { UserModel } from "../models/userModel";
 import { PostModel } from "../models/postModel";
 import { Op } from "sequelize";
 import { FriendModel } from "../models/friendModel";
+import { LikesModel } from "../models/likesModel";
 
 
 export const createPost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { title, content } = req.body;
-        const token = req.headers.authorization?.split(' ')[1];
-
-        if (!token) return res.status(401).send({ message: "Unauthorized" });
-
-        const user = verifyUserToken(token);
-
-        const verifyUser: UserModel | null = await UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser) return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user as UserModel;
 
         const createPost = await PostModel.create({ title, content, userId: verifyUser.id });
 
@@ -32,18 +22,7 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
 
 export const getUserPost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-
-        if (!token) return res.status(401).send({ message: "Unauthorized" });
-
-        const user = verifyUserToken(token);
-
-        const verifyUser: UserModel | null = await UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser) return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user as UserModel;
 
         const userPost = await PostModel.findAll({
             where: {
@@ -60,18 +39,8 @@ export const getUserPost = async (req: Request, res: Response, next: NextFunctio
 export const getSinglePost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { postId } = req.params;
-        const token = req.headers.authorization?.split(' ')[1];
 
-        if (!token) return res.status(401).send({ message: "Unauthorized" });
-
-        const user = verifyUserToken(token);
-
-        const verifyUser: UserModel | null = await UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser) return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user as UserModel;
 
         const singlePost = await PostModel.findOne({
             where: {
@@ -88,18 +57,8 @@ export const getSinglePost = async (req: Request, res: Response, next: NextFunct
 export const updatePost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { postId, title, content } = req.body;
-        const token = req.headers.authorization?.split(' ')[1];
 
-        if (!token) return res.status(401).send({ message: "Unauthorized" });
-
-        const user = verifyUserToken(token);
-
-        const verifyUser: UserModel | null = await UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser) return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user as UserModel;
 
         const updatePost = await PostModel.update({ title, content }, {
             where: {
@@ -121,18 +80,8 @@ export const updatePost = async (req: Request, res: Response, next: NextFunction
 export const deletePost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { postId } = req.params;
-        const token = req.headers.authorization?.split(' ')[1];
 
-        if (!token) return res.status(401).send({ message: "Unauthorized" });
-
-        const user = verifyUserToken(token);
-
-        const verifyUser: UserModel | null = await UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser) return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user as UserModel;
 
         const deletePost = await PostModel.destroy({
             where: {
@@ -153,18 +102,8 @@ export const deletePost = async (req: Request, res: Response, next: NextFunction
 
 export const getFriendPost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
 
-        if (!token) return res.status(401).send({ message: "Unauthorized" });
-
-        const user = verifyUserToken(token);
-
-        const verifyUser: UserModel | null = await UserModel.findOne({
-            where: {
-                email: user
-            }
-        });
-        if (!verifyUser) return res.status(404).send({ message: "User not found" });
+        const verifyUser = req.user as UserModel;
 
         const friends: FriendModel[] = await FriendModel.findAll({
             where: {
@@ -180,10 +119,61 @@ export const getFriendPost = async (req: Request, res: Response, next: NextFunct
             }
         });
 
-        if(friendPosts.length === 0) return res.status(200).send({message: "No friend posts"});
+        if (friendPosts.length === 0) return res.status(200).send({ message: "No friend posts" });
 
         return res.status(200).send({ message: "Friend posts", friendPosts });
     } catch (error) {
         next(error);
+    }
+}
+
+export const likePost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const { postId } = req.params;
+
+        const user = req.user as UserModel;
+
+        const post: PostModel | null = await PostModel.findOne({
+            where: {
+                id: postId
+            }
+        })
+
+        if (!post) return res.status(404).send({ message: "Post not found" })
+        await post.update({ likes: post.likes + 1 })
+
+        await LikesModel.create({
+            userId: user.id,
+            postId: post.id
+        })
+        return res.status(200).send({ likes: post.likes })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const unlikePost = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const { postId } = req.params;
+
+        const user = req.user as UserModel;
+
+        const post: PostModel | null = await PostModel.findOne({
+            where: {
+                id: postId
+            }
+        })
+
+        if (!post) return res.status(404).send({ message: "Post not found" })
+        await post.update({ likes: post.likes - 1 })
+
+        await LikesModel.destroy({
+            where: {
+                [Op.and]: [{ userId: user.id }, { postId: post.id }]
+            }
+        })
+        return res.status(200).send({ likes: post.likes })
+    } catch (error) {
+        next(error)
     }
 }
