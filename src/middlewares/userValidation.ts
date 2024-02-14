@@ -2,17 +2,17 @@ import * as yup from "yup";
 
 export const userValidationSchema = yup.object().shape({
     firstName: yup
-    .string()
-    .min(2, 'First name is too Short!')
-    .max(50, 'First name is too Long!')
-    .required('First name is required')
-    .matches(/^[a-zA-Z0-9]+$/, "First name must contain only alphabets and numbers allowed"),
+        .string()
+        .min(2, 'First name is too Short!')
+        .max(50, 'First name is too Long!')
+        .required('First name is required')
+        .matches(/^[a-zA-Z0-9]+$/, "First name must contain only alphabets and numbers allowed"),
     lastName: yup
-    .string()
-    .min(2, 'First name is too Short!')
-    .max(50, 'First name is too Long!')
-    .required('First name is required')
-    .matches(/^[a-zA-Z0-9]+$/, "First name must contain only alphabets and numbers allowed"),
+        .string()
+        .min(2, 'Last name is too Short!')
+        .max(50, 'Last name is too Long!')
+        .required('Last name is required')
+        .matches(/^[a-zA-Z0-9]+$/, "Last name must contain only alphabets and numbers allowed"),
     userName: yup
         .string()
         .min(2, 'Username is too Short!')

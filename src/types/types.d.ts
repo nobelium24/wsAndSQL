@@ -1,4 +1,4 @@
-import { UserModel } from '../models/UserModel'; // adjust the import path to match your project structure
+import { UserModel } from '../models/UserModel'; 
 
 declare module 'express-serve-static-core' {
     interface Request {
