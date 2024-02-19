@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import { Sequelize } from "sequelize";
 import { FriendModel } from "./friendModel";
 import { LikesModel } from "./likesModel";
+import { PhotoModel } from "./photos";
 dotenv.config();
 
 const enVar = process.env;
@@ -76,6 +77,12 @@ UserModel.hasMany(LikesModel, {
     sourceKey: 'id'
 })
 
+UserModel.hasMany(PhotoModel, {
+    foreignKey: 'userId',
+    as: 'photos',
+    sourceKey: 'id'
+})
+
 GroupModel.hasMany(GroupMessageModel, {
     foreignKey: 'groupId',
     as: 'messages',
@@ -91,6 +98,12 @@ GroupModel.hasMany(GroupMemberModel, {
 PostModel.hasMany(LikesModel, {
     foreignKey: 'postId',
     as: 'likes',
+    sourceKey: 'id'
+})
+
+PostModel.hasMany(PhotoModel, {
+    foreignKey: 'postId',
+    as: 'photos',
     sourceKey: 'id'
 })
 
@@ -158,4 +171,16 @@ LikesModel.belongsTo(PostModel, {
     foreignKey:'postId',
     as: 'post',
     targetKey:'id'
+})
+
+PhotoModel.belongsTo(UserModel, {
+    foreignKey: 'userId',
+    as: 'user',
+    targetKey: 'id'
+})
+
+PhotoModel.belongsTo(PostModel, {
+    foreignKey: 'postId',
+    as: 'post',
+    targetKey: 'id'
 })

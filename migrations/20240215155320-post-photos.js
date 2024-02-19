@@ -9,48 +9,34 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable('posts', {
+    await queryInterface.createTable('photos', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      postId: {
         type: Sequelize.INTEGER,
-        unique: true
-      },
-      title: {
-        type: Sequelize.STRING(128),
-        allowNull: true
-      },
-      content: {
-        type: Sequelize.TEXT,
-        allowNull: false
-      },
-      likes: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-      },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
-          model: 'users', 
-          key: 'id' 
+          model: 'posts', // name of the related model
+          key: 'id',
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        allowNull: false,
+      },
+      url: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
-        type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW
+        type: Sequelize.DATE
       },
       updatedAt: {
-        type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW
+        type: Sequelize.DATE
       }
-    })
+    });
   },
 
   async down (queryInterface, Sequelize) {
@@ -60,6 +46,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('posts')
+    await queryInterface.dropTable('photos');
   }
 };
