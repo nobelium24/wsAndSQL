@@ -24,10 +24,18 @@ export const getUserPost = async (req: Request, res: Response, next: NextFunctio
     try {
         const verifyUser = req.user as UserModel;
 
+        const page: number = Number(req.query.page) || 1;
+        const pageSize: number = Number(req.query.pageSize) || 10;
+
+        const offset: number = (page - 1) * pageSize;
+
         const userPost = await PostModel.findAll({
             where: {
                 userId: verifyUser.id
-            }
+            },
+            limit: pageSize,
+            offset: offset,
+            order: [['createdAt', 'DESC']],
         });
 
         return res.status(200).send({ message: "User posts", userPost });
